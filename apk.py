@@ -59,10 +59,14 @@ st.markdown(
         background: {BG};
     }}
  
-    /* Hide default Streamlit chrome for a shipped-product feel */
-    #MainMenu, footer, header {{ visibility: hidden; }}
-    div[data-testid="stToolbar"] {{ visibility: hidden; }}
-    div[data-testid="stDecoration"] {{ visibility: hidden; }}
+    /* Hide only the parts that are genuinely unrelated to sidebar
+       functionality — these never affect the mobile sidebar toggle. */
+    #MainMenu, footer {{ visibility: hidden; }}
+    /* Deliberately NOT touching header / toolbar / decoration / the
+       sidebar-collapse control here anymore — every attempt to restyle or
+       force-show them via CSS guesses at Streamlit's internal DOM broke
+       the native mobile "reopen sidebar" button. Leaving Streamlit's
+       header fully default guarantees that control works everywhere. */
  
     /* ---- Top bar ---- */
     .m-topbar {{
@@ -72,8 +76,11 @@ st.markdown(
         background: linear-gradient(135deg, {NAVY} 0%, {NAVY_2} 100%);
         padding: 22px 32px;
         border-radius: 14px;
+        margin-top: 8px;
         margin-bottom: 28px;
         box-shadow: 0 6px 20px rgba(14, 42, 71, 0.18);
+        position: relative;
+        z-index: 1;
     }}
     .m-wordmark {{
         font-family: 'IBM Plex Mono', monospace;
@@ -468,7 +475,7 @@ except Exception as e:
 # SIDEBAR — PATIENT INTAKE FORM
 # ----------------------------------------------------------------------
 with st.sidebar:
-    st.markdown(f'<h3 style="color:#0EA894;">Patient Intake</h3>', unsafe_allow_html=True)
+    st.markdown(f'<h3 style="color:{NAVY};">Patient Intake</h3>', unsafe_allow_html=True)
     st.caption("Enter values from the patient chart to generate a risk estimate.")
  
     with st.form("intake_form"):
